@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shiva Prasad Reddy Kistipati | Data Science, AI/ML & Analytics Portfolio</title>
+  <meta name="description" content="Official interactive 3D and Quick-View portfolio of Shiva Prasad Reddy Kistipati — Computer Science & Engineering (Data Science) Graduate skilled in Python, SQL, Machine Learning, Power BI, and Data Analytics." />
+
+  <!-- Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            obsidian: '#070B14',
+            surface: '#0D1424',
+            elevated: '#131D33',
+            cyanAccent: '#38BDF8',
+            emeraldAccent: '#10B981',
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 28px -6px rgba(56, 189, 248, 0.35)',
+            'glow-emerald': '0 0 28px -6px rgba(16, 185, 129, 0.35)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Three.js (r128) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    :root {
+      --bg-obsidian: #070B14;
+      --cyan: #38BDF8;
+      --emerald: #10B981;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #070B14;
+      color: #F1F5F9;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    /* Subtle architectural grid background for Quick View */
+    .bg-cyber-grid {
+      background-size: 44px 44px;
+      background-image:
+        linear-gradient(to right, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+    }
+
+    /* Glassmorphism panels */
+    .glass-panel {
+      background: rgba(13, 20, 36, 0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .glass-panel-strong {
+      background: rgba(9, 14, 26, 0.90);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070B14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1E293B;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #38BDF8;
+    }
+
+    /* 3D Canvas Container */
+    #immersive-canvas-wrapper {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      touch-action: none;
+    }
+
+    canvas#world-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
+    /* Smooth HUD transitions */
+    .hud-slide-in {
+      animation: hudSlide 0.34s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes hudSlide {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      70% { transform: scale(1.22); opacity: 0; }
+      100% { transform: scale(1.22); opacity: 0; }
+    }
+
+    .animate-pulse-ring {
+      animation: pulseRing 2.4s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+
+    /* Print styling for Resume Modal */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-resume-sheet, #printable-resume-sheet * {
+        visibility: visible !important;
+      }
+      #printable-resume-sheet {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        padding: 24px !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-sky-400/30 selection:text-sky-200">
+
+  <!-- ===================================================================== -->
+  <!-- 1. RECRUITER-FIRST PERSISTENT TOP NAVIGATION BAR                      -->
+  <!-- ===================================================================== -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-slate-800/80">
+    <div class="max-w-[1440px] mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
+      
+      <!-- Brand / Identity Anchor -->
+      <button onclick="navigateToWorld(0)" class="flex items-center gap-3 text-left group focus:outline-none shrink-0" title="Return to Identity Core">
+        <div class="relative w-9 h-9 rounded-full overflow-hidden border-2 border-sky-400/70 bg-slate-900 shadow-glow-cyan shrink-0">
+          <img
+            src="my profile image.jpeg"
+            alt="Shiva Prasad Reddy Kistipati"
+            onerror="handleProfileImgError(this)"
+            class="profile-photo-img w-full h-full object-cover object-top"
+          />
+          <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-obsidian"></span>
+        </div>
+        <div class="hidden sm:block">
+          <div class="text-xs font-mono uppercase tracking-wider text-sky-400 leading-none">Data Science & AI</div>
+          <div class="text-sm font-bold text-slate-100 tracking-tight group-hover:text-sky-300 transition-colors">
+            Shiva Prasad Reddy
+          </div>
+        </div>
+      </button>
+
+      <!-- Recruiter-First Direct Section Links (Desktop) -->
+      <nav aria-label="Primary Portfolio Navigation" class="hidden xl:flex items-center gap-1 text-xs font-medium text-slate-300">
+        <button onclick="navigateToWorld(0)" data-nav-world="0" class="nav-link px-2.5 py-1.5 rounded-lg hover:bg-slate-800/80 hover:text-sky-300 transition">About Me</button>
+        <button onclick="navigateToWorld(1)" data-nav-world="1" class="nav-link px-2.5 py-1.5 rounded-lg hover:bg-slate-800/80 hover:text-sky-300 transition">Skills</button>
+        <button onclick="navigateToWorld(2)" data-nav-world="2" class="nav-link px-2.5 py-1.5 rounded-lg hover:bg-slate-800/80 hover:text-sky-300 transition">Projects</button>
+        <button onclick="navigateToWorld(3)" data-nav-world="3" class="nav-link px-2.5 py-1.5 rounded-lg hover:bg-slate-800/80 hover:text-sky-300 transition">Experience</button>
+        <button onclick="navigateToWorld(4)" data-nav-world="4" class="nav-link px-2.5 py-1.5 rounded-lg hover:bg-slate-800/80 hover:text-sky-300 transition">Education</button>
+        <button onclick="navigateToWorld(5)" data-nav-world="5" class="nav-link px-2.5 py-1.5 rounded-lg hover:bg-slate-800/80 hover:text-sky-300 transition">Certifications</button>
+        <button onclick="navigateToWorld(6)" data-nav-world="6" class="nav-link px-2.5 py-1.5 rounded-lg hover:bg-slate-800/80 hover:text-sky-300 transition">Contact</button>
+      </nav>
+
+      <!-- Mode Switcher Pill + External Credentials + Resume CTA -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- Dual-Mode Toggle Pill -->
+        <div role="group" aria-label="Portfolio Exploration Mode" class="inline-flex items-center p-1 rounded-xl bg-slate-950/90 border border-slate-800 shadow-inner">
+          <button
+            id="btn-mode-3d"
+            onclick="setPortfolioMode('3d')"
+            class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all bg-sky-500/20 text-sky-300 border border-sky-400/40 shadow-glow-cyan"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>
+            <span>3D Worlds</span>
+          </button>
+          <button
+            id="btn-mode-quick"
+            onclick="setPortfolioMode('quick')"
+            class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-slate-400 hover:text-slate-100 border border-transparent"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10"/></svg>
+            <span>Quick View</span>
+          </button>
+        </div>
+
+        <!-- GitHub & LinkedIn Quick Icons -->
+        <a href="https://github.com/Shivalateral" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" title="GitHub: Shivalateral" class="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-sky-400/40 text-slate-300 hover:text-white transition">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/kistipati-shivaprasadreddy" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" title="LinkedIn Profile" class="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-sky-400/40 text-slate-300 hover:text-sky-400 transition">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+        </a>
+
+        <!-- Resume Modal Trigger -->
+        <button onclick="openResumeModal()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-cyan transition shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span>Resume</span>
+        </button>
+
+        <!-- Mobile Menu Button -->
+        <button onclick="toggleMobileMenu()" aria-label="Toggle Menu" class="xl:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 hover:border-sky-400/50">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Navigation -->
+    <div id="mobile-nav-drawer" class="hidden xl:hidden border-t border-slate-800/90 bg-obsidian/95 px-4 py-3">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-medium">
+        <button onclick="navigateToWorld(0); toggleMobileMenu()" class="p-2.5 rounded-xl bg-slate-900/90 text-left text-slate-200 hover:text-sky-300 border border-slate-800">01. About Me</button>
+        <button onclick="navigateToWorld(1); toggleMobileMenu()" class="p-2.5 rounded-xl bg-slate-900/90 text-left text-slate-200 hover:text-sky-300 border border-slate-800">02. Skills</button>
+        <button onclick="navigateToWorld(2); toggleMobileMenu()" class="p-2.5 rounded-xl bg-slate-900/90 text-left text-slate-200 hover:text-sky-300 border border-slate-800">03. Projects</button>
+        <button onclick="navigateToWorld(3); toggleMobileMenu()" class="p-2.5 rounded-xl bg-slate-900/90 text-left text-slate-200 hover:text-sky-300 border border-slate-800">04. Experience</button>
+        <button onclick="navigateToWorld(4); toggleMobileMenu()" class="p-2.5 rounded-xl bg-slate-900/90 text-left text-slate-200 hover:text-sky-300 border border-slate-800">05. Education</button>
+        <button onclick="navigateToWorld(5); toggleMobileMenu()" class="p-2.5 rounded-xl bg-slate-900/90 text-left text-slate-200 hover:text-sky-300 border border-slate-800">06. Certifications</button>
+        <button onclick="navigateToWorld(6); toggleMobileMenu()" class="p-2.5 rounded-xl bg-slate-900/90 text-left text-slate-200 hover:text-sky-300 border border-slate-800">07. Contact</button>
+        <div class="flex items-center gap-2">
+          <a href="https://github.com/Shivalateral" target="_blank" rel="noopener noreferrer" class="flex-1 p-2.5 rounded-xl bg-slate-900 text-center text-sky-300 border border-slate-800">GitHub</a>
+          <a href="https://www.linkedin.com/in/kistipati-shivaprasadreddy" target="_blank" rel="noopener noreferrer" class="flex-1 p-2.5 rounded-xl bg-slate-900 text-center text-emerald-300 border border-slate-800">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- 2. MODE 1 — IMMERSIVE 3D WORLDS EXPERIENCE (Three.js + HUD Overlay)   -->
+  <!-- ===================================================================== -->
+  <div id="mode-3d-container" class="relative w-full h-screen overflow-hidden">
+    <!-- Three.js WebGL Canvas -->
+    <div id="immersive-canvas-wrapper">
+      <canvas id="world-canvas"></canvas>
+    </div>
+
+    <!-- Top-Left 10-Second Identity & Telemetry Pill (Always visible in 3D) -->
+    <div class="fixed top-20 left-3 sm:left-6 z-30 max-w-sm pointer-events-auto">
+      <div class="glass-panel rounded-2xl p-3.5 sm:p-4 border border-sky-500/25 shadow-xl">
+        <div class="flex items-center gap-3">
+          <div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-sky-400/80 shadow-glow-cyan shrink-0">
+            <img
+              src="my profile image.jpeg"
+              alt="Shiva Prasad Reddy Kistipati"
+              onerror="handleProfileImgError(this)"
+              class="profile-photo-img w-full h-full object-cover object-top"
+            />
+          </div>
+          <div class="min-w-0">
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-[10px] font-mono text-emerald-300 mb-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              OPEN TO DATA / AI / ML ROLES
+            </div>
+            <h1 class="text-sm sm:text-base font-extrabold text-white truncate">SHIVA PRASAD REDDY KISTIPATI</h1>
+            <p class="text-[11px] sm:text-xs text-slate-300 truncate">CSE (Data Science) • Python, SQL, ML & Analytics</p>
+          </div>
+        </div>
+        <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+          <span id="hud-world-indicator" class="text-sky-300 font-semibold">WORLD 01/07 • IDENTITY CORE</span>
+          <div class="flex items-center gap-2.5">
+            <button onclick="triggerPhotoPicker()" class="text-emerald-300 hover:text-emerald-200 underline decoration-emerald-500/50 underline-offset-2 transition" title="Load or replace local profile photo">
+              Photo
+            </button>
+            <button onclick="resetCameraOverview()" class="text-slate-300 hover:text-sky-300 underline decoration-sky-500/50 underline-offset-2 transition">
+              Overview [R]
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden File Input for Instant Local Photo Binding -->
+    <input type="file" id="profile-photo-input" accept="image/*" class="hidden" onchange="handleLocalPhotoUpload(event)" />
+
+    <!-- Hover Tooltip for 3D Stations -->
+    <div id="station-tooltip" class="fixed z-40 pointer-events-none hidden px-3 py-1.5 rounded-xl glass-panel-strong text-xs font-mono text-sky-300 shadow-lg border border-sky-400/40">
+      Click to inspect station
+    </div>
+
+    <!-- Right-Side Glassmorphic World Inspector Panel (Updates dynamically per World) -->
+    <aside id="world-hud-inspector" aria-live="polite" class="fixed top-20 sm:top-20 right-3 sm:right-6 bottom-24 z-30 w-[calc(100vw-1.5rem)] sm:w-[430px] max-h-[calc(100vh-11.5rem)] flex flex-col pointer-events-auto">
+      <div id="hud-card-body" class="glass-panel-strong rounded-2xl p-4 sm:p-5 overflow-y-auto flex-1 shadow-2xl hud-slide-in">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </aside>
+
+    <!-- Bottom 7-World Quick-Jump Dock + Navigation Controls -->
+    <div class="fixed bottom-3 left-1/2 -translate-x-1/2 z-30 w-[calc(100vw-1.5rem)] max-w-4xl pointer-events-auto">
+      <div class="glass-panel rounded-2xl p-2 border border-slate-800/90 shadow-2xl">
+        <div class="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar" id="world-dock-buttons">
+          <!-- Populated dynamically via JS -->
+        </div>
+        <div class="hidden sm:flex items-center justify-between px-2 pt-1.5 mt-1.5 border-t border-slate-800/70 text-[11px] font-mono text-slate-400">
+          <span>Drag to Orbit • Scroll to Zoom • Click any 3D World Node or Press Keys [1–7]</span>
+          <span class="text-sky-400">7 Interconnected Professional Worlds</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 3. MODE 2 — PROFESSIONAL QUICK VIEW (Recruiter-Optimized Editorial)   -->
+  <!-- ===================================================================== -->
+  <main id="mode-quick-container" class="hidden pt-20 pb-20 bg-obsidian bg-cyber-grid min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+
+      <!-- HERO / 10-SECOND PROFESSIONAL IDENTITY -->
+      <section id="qv-about" class="glass-panel rounded-3xl p-6 sm:p-10 border border-sky-500/20 shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          <!-- Portrait & Verified Status -->
+          <div class="lg:col-span-4 flex flex-col items-center text-center">
+            <div class="relative group w-48 h-48 sm:w-56 sm:h-56 rounded-3xl p-1.5 bg-gradient-to-br from-sky-400 via-cyan-300 to-emerald-400 shadow-glow-cyan">
+              <div class="w-full h-full rounded-[20px] overflow-hidden bg-slate-900 relative">
+                <img
+                  src="my profile image.jpeg"
+                  alt="Shiva Prasad Reddy Kistipati"
+                  onerror="handleProfileImgError(this)"
+                  class="profile-photo-img w-full h-full object-cover object-top"
+                />
+                <button
+                  type="button"
+                  onclick="triggerPhotoPicker()"
+                  class="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-xl bg-slate-950/85 hover:bg-slate-900 text-sky-300 border border-sky-400/40 text-[11px] font-mono backdrop-blur-md shadow-lg transition"
+                  title="Update or load your profile photo"
+                >
+                  Change Photo
+                </button>
+              </div>
+            </div>
+            <div class="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-xs font-mono text-emerald-300">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Open to Data Science, AI/ML & Data Analytics Roles
+            </div>
+            <div class="mt-2 text-xs font-mono text-slate-400">
+              Hyderabad, Telangana, India
+            </div>
+            <div class="mt-3 flex items-center justify-center gap-2">
+              <a href="https://github.com/Shivalateral" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition">GitHub</a>
+              <a href="https://www.linkedin.com/in/kistipati-shivaprasadreddy" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-sky-300 transition">LinkedIn</a>
+              <a href="https://leetcode.com/u/K_s_reddy133" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-amber-300 transition">LeetCode</a>
+            </div>
+          </div>
+
+          <!-- Executive Summary & Recruiter CTAs -->
+          <div class="lg:col-span-8 space-y-5">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-sky-500/10 border border-sky-400/30 text-sky-300 font-mono text-xs">
+              B.Tech CSE (Data Science) • CGPA 8.46/10 • LeetCode SQL 50 Badge
+            </div>
+            <h1 class="text-2xl sm:text-4xl lg:text-[40px] font-extrabold tracking-tight text-white leading-tight">
+              SHIVA PRASAD REDDY KISTIPATI
+            </h1>
+            <p class="text-base sm:text-lg font-semibold text-sky-300">
+              Computer Science & Engineering (Data Science) Graduate | Python, SQL, Machine Learning & Data Analytics
+            </p>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+              Computer Science and Engineering (Data Science) graduate with a strong academic foundation in Python, SQL, data analysis, and machine learning. Experienced through academic projects and virtual internships in data preprocessing, exploratory analysis, predictive modeling, and interactive reporting. Seeking an entry-level role or internship in Data Science, Artificial Intelligence, Machine Learning, or Data Analytics to build practical, data-driven solutions.
+            </p>
+
+            <!-- High-Impact Metrics Strip -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+              <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800">
+                <div class="text-lg sm:text-xl font-extrabold text-sky-400 font-mono">8.46</div>
+                <div class="text-[11px] text-slate-400">B.Tech CGPA / 10</div>
+              </div>
+              <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800">
+                <div class="text-lg sm:text-xl font-extrabold text-emerald-400 font-mono">50+</div>
+                <div class="text-[11px] text-slate-400">LeetCode SQL Solved</div>
+              </div>
+              <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800">
+                <div class="text-lg sm:text-xl font-extrabold text-amber-400 font-mono">75%</div>
+                <div class="text-[11px] text-slate-400">NPTEL ML Elite+Silver</div>
+              </div>
+              <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800">
+                <div class="text-lg sm:text-xl font-extrabold text-purple-400 font-mono">2</div>
+                <div class="text-[11px] text-slate-400">AI & Cloud Internships</div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <button onclick="openResumeModal()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-bold text-sm flex items-center gap-2 shadow-glow-cyan transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>Preview & Download Resume</span>
+              </button>
+              <a href="#qv-projects" class="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm border border-slate-700 hover:border-sky-400/50 transition">
+                Explore Featured Projects
+              </a>
+              <a href="#qv-contact" class="px-5 py-3 rounded-xl bg-slate-900/60 hover:bg-slate-800 text-sky-300 font-semibold text-sm border border-sky-500/30 transition">
+                Contact Me
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURED PROJECTS CASE STUDIES -->
+      <section id="qv-projects" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-sky-400">02 // Verified Engineering & Analytics Work</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Featured Projects</h2>
+          </div>
+          <p class="text-xs text-slate-400">Click any project to inspect business problem, architecture & outcomes</p>
+        </div>
+        <div id="qv-projects-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Rendered from PORTFOLIO_DATA -->
+        </div>
+      </section>
+
+      <!-- INTERACTIVE TECHNICAL SKILLS MATRIX -->
+      <section id="qv-skills" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-emerald-400">03 // Core Technical Stack</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Technical Skills & Capabilities</h2>
+          </div>
+          <div id="qv-skill-filters" class="flex flex-wrap gap-1.5">
+            <!-- Filter pills rendered via JS -->
+          </div>
+        </div>
+        <div id="qv-skills-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Rendered from PORTFOLIO_DATA -->
+        </div>
+      </section>
+
+      <!-- EXPERIENCE & EDUCATION TIMELINE -->
+      <section id="qv-experience" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Internships -->
+        <div class="space-y-5">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-sky-400">04 // Industry & Virtual Training</span>
+            <h2 class="text-2xl font-extrabold text-white mt-1">Internship Experience</h2>
+          </div>
+          <div id="qv-experience-list" class="space-y-4">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Education -->
+        <div id="qv-education" class="space-y-5">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-emerald-400">05 // Academic Foundation</span>
+            <h2 class="text-2xl font-extrabold text-white mt-1">Education</h2>
+          </div>
+          <div id="qv-education-list" class="space-y-4">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- CERTIFICATIONS & CODING CREDENTIALS -->
+      <section id="qv-certifications" class="space-y-6">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-amber-400">06 // Verified Credentials & Competitive SQL</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Certifications & Coding Platforms</h2>
+        </div>
+        <div id="qv-certs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+
+      <!-- RECRUITER DIRECT CONTACT & QUICK COPY -->
+      <section id="qv-contact" class="glass-panel rounded-3xl p-6 sm:p-10 border border-sky-500/25">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div class="lg:col-span-5 space-y-5">
+            <span class="text-xs font-mono uppercase tracking-widest text-sky-400">07 // Immediate Connection</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Let's Connect on Data & AI Opportunities</h2>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Available for full-time entry-level roles and internships in Data Science, Machine Learning, AI Engineering, and Business/Data Analytics.
+            </p>
+
+            <div class="space-y-3 pt-2">
+              <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="text-[11px] font-mono text-slate-400">DIRECT EMAIL</div>
+                  <div class="text-sm font-semibold text-white truncate">kkshivareddykistipati@gmail.com</div>
+                </div>
+                <button onclick="copyToClipboard('kkshivareddykistipati@gmail.com', 'Email address')" class="px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-xs font-mono border border-sky-400/30 shrink-0 transition">
+                  Copy
+                </button>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-3">
+                <div>
+                  <div class="text-[11px] font-mono text-slate-400">PHONE / WHATSAPP</div>
+                  <div class="text-sm font-semibold text-white">+91 9951338294</div>
+                </div>
+                <button onclick="copyToClipboard('+91 9951338294', 'Phone number')" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-mono border border-emerald-400/30 shrink-0 transition">
+                  Copy
+                </button>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800">
+                <div class="text-[11px] font-mono text-slate-400">LOCATION</div>
+                <div class="text-sm font-semibold text-white">Hyderabad, Telangana, India</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7">
+            <form onsubmit="handleContactSubmit(event)" class="p-5 sm:p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+              <h3 class="text-base font-bold text-white">Send a Direct Message</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-mono text-slate-400 mb-1.5">YOUR NAME</label>
+                  <input type="text" required placeholder="Recruiter / Hiring Manager" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-slate-700 text-sm text-white focus:outline-none focus:border-sky-400" />
+                </div>
+                <div>
+                  <label class="block text-xs font-mono text-slate-400 mb-1.5">YOUR EMAIL</label>
+                  <input type="email" required placeholder="name@company.com" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-slate-700 text-sm text-white focus:outline-none focus:border-sky-400" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-mono text-slate-400 mb-1.5">OPPORTUNITY / ROLE</label>
+                <input type="text" required placeholder="e.g., Data Analyst / Junior Data Scientist / ML Intern" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-slate-700 text-sm text-white focus:outline-none focus:border-sky-400" />
+              </div>
+              <div>
+                <label class="block text-xs font-mono text-slate-400 mb-1.5">MESSAGE</label>
+                <textarea rows="3" required placeholder="Share role details, interview availability, or project inquiry..." class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-slate-700 text-sm text-white focus:outline-none focus:border-sky-400"></textarea>
+              </div>
+              <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-bold text-sm shadow-glow-cyan transition">
+                Send Inquiry & Prepare Email
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- 4. PROJECT CASE STUDY INSPECTION MODAL                                -->
+  <!-- ===================================================================== -->
+  <div id="project-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="glass-panel-strong rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 border border-sky-400/35 shadow-2xl relative">
+      <button onclick="closeProjectModal()" aria-label="Close Project Details" class="absolute top-5 right-5 w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition">
+        ✕
+      </button>
+      <div id="project-modal-content"></div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 5. FORMATTED VERIFIED RESUME PREVIEW & DOWNLOAD MODAL                 -->
+  <!-- ===================================================================== -->
+  <div id="resume-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+      <!-- Modal Toolbar -->
+      <div class="px-5 py-3.5 bg-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+          <span class="text-xs sm:text-sm font-mono font-bold text-white">Shiva_Prasad_Reddy_Kistipati_Resume.pdf</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>Print / Save as PDF</span>
+          </button>
+          <button onclick="downloadResumeTextFile()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 transition">
+            Download .TXT
+          </button>
+          <button onclick="closeResumeModal()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Clean Printable Resume Sheet -->
+      <div class="p-4 sm:p-8 overflow-y-auto bg-slate-900">
+        <div id="printable-resume-sheet" class="bg-white text-slate-900 rounded-2xl p-6 sm:p-10 max-w-3xl mx-auto shadow-xl space-y-5 text-sm leading-relaxed">
+          <div class="border-b-2 border-slate-900 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <img
+                src="my profile image.jpeg"
+                alt="Shiva Prasad Reddy Kistipati"
+                onerror="handleProfileImgError(this)"
+                class="profile-photo-img w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover object-top border-2 border-slate-900 shrink-0"
+              />
+              <div>
+                <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-950">SHIVA PRASAD REDDY KISTIPATI</h2>
+                <p class="text-xs sm:text-sm text-slate-700 mt-1">
+                  Hyderabad, Telangana, India | +91 9951338294 | kkshivareddykistipati@gmail.com
+                </p>
+                <p class="text-xs text-sky-700 font-medium mt-1">
+                  LinkedIn: linkedin.com/in/kistipati-shivaprasadreddy | GitHub: github.com/Shivalateral | LeetCode: leetcode.com/u/K_s_reddy133
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-950 border-b border-slate-300 pb-1 mb-2">Internship Experience</h3>
+            <div class="space-y-2 text-xs sm:text-sm text-slate-800">
+              <div>
+                <div class="font-bold text-slate-950">Google Cloud — Generative AI Virtual Internship (Cohort 9)</div>
+                <p>Explored Generative AI, Vertex AI, Google Cloud technologies, and Streamlit through guided, hands-on learning modules.</p>
+              </div>
+              <div>
+                <div class="font-bold text-slate-950">TechSaksham — AI Internship</div>
+                <p>Gained practical exposure to Artificial Intelligence concepts and Python-based application development through structured internship activities.</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-950 border-b border-slate-300 pb-1 mb-2">Education</h3>
+            <div class="space-y-1.5 text-xs sm:text-sm text-slate-800">
+              <div class="flex justify-between">
+                <span><strong>B.Tech — Computer Science & Engineering (Data Science)</strong>, Anurag University, Hyderabad</span>
+                <span class="font-semibold">2023 – 2026 | CGPA: 8.46 / 10</span>
+              </div>
+              <div class="flex justify-between">
+                <span><strong>Diploma — Computer Science & Engineering</strong></span>
+                <span class="font-semibold">2020 – 2023 | CGPA: 9.1 / 10</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-950 border-b border-slate-300 pb-1 mb-2">Certifications & Problem-Solving</h3>
+            <ul class="list-disc ml-5 text-xs sm:text-sm text-slate-800 space-y-0.5">
+              <li><strong>NPTEL:</strong> Introduction to Machine Learning — Elite + Silver (75%)</li>
+              <li><strong>NPTEL:</strong> Database Management Systems</li>
+              <li><strong>Google Cloud:</strong> Data Analytics Virtual Internship</li>
+              <li><strong>LeetCode & HackerRank:</strong> Completed LeetCode SQL 50 Study Plan (50 SQL problems solved, SQL Badge earned); practicing Python & SQL on HackerRank.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 6. NON-INTRUSIVE TOAST NOTIFICATION BANNER                            -->
+  <!-- ===================================================================== -->
+  <div id="toast-banner" class="fixed bottom-24 sm:bottom-6 right-4 sm:right-6 z-50 hidden px-4 py-3 rounded-2xl glass-panel-strong border border-emerald-400/40 text-xs font-mono text-emerald-300 shadow-2xl">
+    Copied to clipboard!
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 7. APPLICATION DATA & INTERACTIVE ENGINE (Single Source of Truth)     -->
+  <!-- ===================================================================== -->
+  <script>
+    /**
+     * VERIFIED SINGLE-SOURCE-OF-TRUTH PORTFOLIO DATA
+     * Shared seamlessly between Mode 1 (3D Immersive Worlds) and Mode 2 (Professional Quick View).
+     */
+    const PORTFOLIO_DATA = {
+      profile: {
+        name: "SHIVA PRASAD REDDY KISTIPATI",
+        shortName: "Shiva Prasad Reddy",
+        headline: "Computer Science & Engineering (Data Science) Graduate | Python, SQL, Machine Learning & Data Analytics",
+        location: "Hyderabad, Telangana, India",
+        phone: "+91 9951338294",
+        email: "kkshivareddykistipati@gmail.com",
+        linkedin: "https://www.linkedin.com/in/kistipati-shivaprasadreddy",
+        github: "https://github.com/Shivalateral",
+        leetcode: "https://leetcode.com/u/K_s_reddy133",
+        image: "my profile image.jpeg",
+        summary: "Computer Science and Engineering (Data Science) graduate with a strong academic foundation in Python, SQL, data analysis, and machine learning. Experienced through academic projects and virtual internships in data preprocessing, exploratory analysis, predictive modeling, and interactive reporting. Seeking an entry-level role or internship in Data Science, Artificial Intelligence, Machine Learning, or Data Analytics to build practical, data-driven solutions."
+      },
+      skills: [
+        {
+          id: "python",
+          category: "Programming & Data Engineering",
+          name: "Python",
+          proficiency: 92,
+          accent: "#38BDF8",
+          badge: "Core Language",
+          topics: ["Data Structures", "Unpacking", "Comprehensions", "Lambda Functions", "Exception Handling", "Pandas", "Streamlit"],
+          evidence: "Used to engineer DataPilot AI end-to-end automated data cleaning, KPI pipelines, and interactive Streamlit web apps."
+        },
+        {
+          id: "sql",
+          category: "Database & Query Optimization",
+          name: "SQL (MySQL)",
+          proficiency: 90,
+          accent: "#10B981",
+          badge: "LeetCode SQL 50 Badge",
+          topics: ["Joins", "Recursive & Non-Recursive CTEs", "Window Functions", "Views", "Stored Procedures"],
+          evidence: "Completed the LeetCode SQL 50 study plan (50 SQL problems solved) and NPTEL Database Management Systems certification."
+        },
+        {
+          id: "ml",
+          category: "Predictive Modeling & AI",
+          name: "Machine Learning",
+          proficiency: 86,
+          accent: "#A855F7",
+          badge: "NPTEL Elite + Silver (75%)",
+          topics: ["Regression", "Classification", "Feature Engineering", "Random Forest", "XGBoost", "Model Evaluation"],
+          evidence: "Certified by NPTEL (Elite + Silver, 75%) and reinforced via TechSaksham AI & Google Cloud Generative AI internships."
+        },
+        {
+          id: "powerbi",
+          category: "Business Intelligence",
+          name: "Power BI",
+          proficiency: 85,
+          accent: "#F59E0B",
+          badge: "BI & DAX Modeling",
+          topics: ["Data Modelling", "DAX", "CALCULATE()", "Filter Context", "Row-Level Security"],
+          evidence: "Designs relational star schemas, dynamic DAX measures, and role-secured executive KPI reporting."
+        },
+        {
+          id: "excel",
+          category: "Business Intelligence",
+          name: "Advanced Excel",
+          proficiency: 91,
+          accent: "#22C55E",
+          badge: "Executive Analytics",
+          topics: ["XLOOKUP", "INDEX-MATCH", "Pivot Tables", "Power Query", "Executive Dashboards"],
+          evidence: "Built the Blinkit Sales Analysis Dashboard analyzing retail outlets, product categories, and customer patterns."
+        }
+      ],
+      projects: [
+        {
+          id: "datapilot-ai",
+          title: "DataPilot AI — Automated Data Analysis Platform",
+          tagline: "End-to-end automated Excel ingestion, cleaning, KPI generation & downloadable reporting engine",
+          stack: ["Python", "Pandas", "Excel", "Streamlit"],
+          liveUrl: "https://datapilot-ai-2.onrender.com",
+          githubUrl: "https://github.com/Shivalateral",
+          accent: "#38BDF8",
+          metrics: ["Automated Data Cleaning", "Dynamic KPI & Pivot Engine", "One-Click Report Export"],
+          businessProblem: "Manual data cleaning, KPI extraction, and pivot table reporting on raw Excel spreadsheets consume hours of repetitive analyst effort and introduce human formatting errors.",
+          implementation: "Developed an end-to-end automated workflow in Python, Pandas, and Streamlit for uploading and processing raw Excel datasets. Automated missing-value handling, schema normalization, dynamic KPI generation, multi-dimensional pivot analysis, interactive visual dashboards, and downloadable analytical reports."
+        },
+        {
+          id: "blinkit-dashboard",
+          title: "Blinkit Sales Analysis Dashboard",
+          tagline: "Executive retail intelligence dashboard uncovering outlet-tier & category revenue drivers",
+          stack: ["Advanced Excel", "Pivot Tables", "XLOOKUP", "Power Query"],
+          liveUrl: null,
+          githubUrl: "https://github.com/Shivalateral",
+          accent: "#10B981",
+          metrics: ["Multi-Outlet Comparison", "Category Revenue Breakdown", "Customer Pattern Insights"],
+          businessProblem: "Retail operations stakeholders needed consolidated visibility into outlet-type sales performance, product category distribution, and customer purchasing behavior across disparate store logs.",
+          implementation: "Cleaned and structured raw retail transaction datasets using Power Query and XLOOKUP. Engineered dynamic Pivot Tables, slicers, and executive visual charts to surface top-performing outlet tiers, seasonal item trends, and actionable inventory recommendations."
+        }
+      ],
+      experience: [
+        {
+          id: "gcp-genai",
+          role: "Generative AI Virtual Internship (Cohort 9)",
+          organization: "Google Cloud",
+          type: "Virtual Internship",
+          accent: "#38BDF8",
+          tags: ["Generative AI", "Vertex AI", "Google Cloud", "Streamlit"],
+          highlights: [
+            "Explored Generative AI architectures, foundation models, and prompt engineering workflows on Google Cloud.",
+            "Built hands-on prototypes integrating Vertex AI capabilities with interactive Streamlit interfaces."
+          ]
+        },
+        {
+          id: "techsaksham-ai",
+          role: "AI Internship",
+          organization: "TechSaksham",
+          type: "Structured Internship",
+          accent: "#10B981",
+          tags: ["Artificial Intelligence", "Python", "Applied ML"],
+          highlights: [
+            "Gained practical exposure to core Artificial Intelligence concepts and algorithmic problem solving.",
+            "Developed Python-based AI application modules through guided, milestone-driven internship activities."
+          ]
+        }
+      ],
+      education: [
+        {
+          degree: "B.Tech — Computer Science & Engineering (Data Science)",
+          institution: "Anurag University, Hyderabad",
+          period: "2023 – 2026",
+          score: "CGPA: 8.46 / 10",
+          focus: "Data Science, Machine Learning, Database Management Systems, Statistical Modeling & Algorithms"
+        },
+        {
+          degree: "Diploma — Computer Science & Engineering",
+          institution: "State Board of Technical Education",
+          period: "2020 – 2023",
+          score: "CGPA: 9.1 / 10",
+          focus: "Core Computer Science, Data Structures, Relational Databases & Software Engineering Fundamentals"
+        }
+      ],
+      certifications: [
+        {
+          title: "Introduction to Machine Learning",
+          issuer: "NPTEL",
+          badge: "Elite + Silver (75%)",
+          accent: "#38BDF8",
+          detail: "Top-tier national certification covering supervised/unsupervised learning, SVMs, neural networks, and model evaluation."
+        },
+        {
+          title: "Database Management Systems",
+          issuer: "NPTEL",
+          badge: "Verified Certificate",
+          accent: "#10B981",
+          detail: "Comprehensive mastery of relational algebra, normalization, SQL querying, indexing, and transaction concurrency."
+        },
+        {
+          title: "Data Analytics Virtual Internship",
+          issuer: "Google Cloud",
+          badge: "Cloud Analytics",
+          accent: "#A855F7",
+          detail: "Hands-on cloud data warehousing, analytical pipelines, and insight generation workflows."
+        },
+        {
+          title: "SQL 50 Study Plan — SQL Badge",
+          issuer: "LeetCode",
+          badge: "50 SQL Problems Solved",
+          accent: "#F59E0B",
+          detail: "Solved 50 complex SQL challenges spanning window functions, self-joins, subqueries, and aggregations."
+        },
+        {
+          title: "Python & SQL Problem Solving",
+          issuer: "HackerRank",
+          badge: "Active Practitioner",
+          accent: "#22C55E",
+          detail: "Continuous practice in algorithmic Python scripting and relational SQL query optimization."
+        }
+      ],
+      worlds: [
+        { id: 0, code: "01", name: "Identity Core", short: "About Me", color: 0x38bdf8, hex: "#38BDF8", pos: [0, 0, 0] },
+        { id: 1, code: "02", name: "Tech Matrix", short: "Skills", color: 0x10b981, hex: "#10B981", pos: [9.5, 1.2, -5.5] },
+        { id: 2, code: "03", name: "Project Forge", short: "Projects", color: 0x0ea5e9, hex: "#0EA5E9", pos: [9.5, 1.6, 5.5] },
+        { id: 3, code: "04", name: "Experience Nexus", short: "Experience", color: 0xa855f7, hex: "#A855F7", pos: [0, 2.0, 11] },
+        { id: 4, code: "05", name: "Academic Citadel", short: "Education", color: 0xf59e0b, hex: "#F59E0B", pos: [-9.5, 1.6, 5.5] },
+        { id: 5, code: "06", name: "Credential Vault", short: "Certifications", color: 0x22c55e, hex: "#22C55E", pos: [-9.5, 1.2, -5.5] },
+        { id: 6, code: "07", name: "Comms Terminal", short: "Contact", color: 0xf43f5e, hex: "#F43F5E", pos: [0, 2.2, -11] }
+      ]
+    };
+
+    // =========================================================================
+    // STATE MANAGEMENT & PROFILE PHOTO SYNC
+    // =========================================================================
+    let currentMode = '3d'; // '3d' or 'quick'
+    let activeWorldIndex = 0;
+    let activeSkillFilter = 'All';
+    let currentProfilePhotoSrc = 'my profile image.jpeg';
+    let holoPortraitMesh = null;
+
+    /**
+     * Generates a clean, crisp SVG data-URI fallback portrait if the external
+     * 'my profile image.jpeg' file is not present in the preview sandbox folder.
+     */
+    function getFallbackPortraitDataURI() {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0D1424"/>
+            <stop offset="100%" stop-color="#1E293B"/>
+          </linearGradient>
+          <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#38BDF8"/>
+            <stop offset="100%" stop-color="#10B981"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="400" fill="url(#bg)"/>
+        <circle cx="200" cy="200" r="175" fill="none" stroke="url(#ring)" stroke-width="6" opacity="0.75"/>
+        <circle cx="200" cy="152" r="56" fill="#334155"/>
+        <path d="M96 340 C96 266 304 266 304 340 Z" fill="#1E3A5F"/>
+        <text x="200" y="376" font-family="sans-serif" font-size="22" font-weight="700" fill="#38BDF8" text-anchor="middle">SHIVA PRASAD REDDY</text>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    function handleProfileImgError(imgEl) {
+      imgEl.onerror = null;
+      const fallback = getFallbackPortraitDataURI();
+      currentProfilePhotoSrc = fallback;
+      imgEl.src = fallback;
+      updateHoloPortraitTexture(fallback);
+    }
+
+    function triggerPhotoPicker() {
+      const input = document.getElementById('profile-photo-input');
+      if (input) input.click();
+    }
+
+    function handleLocalPhotoUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const dataUrl = e.target.result;
+        applyProfilePhotoEverywhere(dataUrl);
+        showToast('Profile photo updated across 3D & Quick View!');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function applyProfilePhotoEverywhere(src) {
+      currentProfilePhotoSrc = src;
+      PORTFOLIO_DATA.profile.image = src;
+      document.querySelectorAll('.profile-photo-img').forEach((img) => {
+        img.src = src;
+      });
+      render3DWorldHUD(activeWorldIndex);
+      updateHoloPortraitTexture(src);
+    }
+
+    // =========================================================================
+    // MODE SWITCHING & NAVIGATION
+    // =========================================================================
+    function setPortfolioMode(mode) {
+      currentMode = mode;
+      const container3D = document.getElementById('mode-3d-container');
+      const containerQuick = document.getElementById('mode-quick-container');
+      const btn3D = document.getElementById('btn-mode-3d');
+      const btnQuick = document.getElementById('btn-mode-quick');
+
+      if (mode === '3d') {
+        container3D.classList.remove('hidden');
+        containerQuick.classList.add('hidden');
+        btn3D.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all bg-sky-500/20 text-sky-300 border border-sky-400/40 shadow-glow-cyan';
+        btnQuick.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-slate-400 hover:text-slate-100 border border-transparent';
+        onWindowResize();
+      } else {
+        container3D.classList.add('hidden');
+        containerQuick.classList.remove('hidden');
+        btnQuick.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 shadow-glow-emerald';
+        btn3D.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-slate-400 hover:text-slate-100 border border-transparent';
+      }
+    }
+
+    function navigateToWorld(index) {
+      activeWorldIndex = index;
+      updateNavHighlight();
+
+      if (currentMode === 'quick') {
+        const sectionMap = ['qv-about', 'qv-skills', 'qv-projects', 'qv-experience', 'qv-education', 'qv-certifications', 'qv-contact'];
+        const el = document.getElementById(sectionMap[index]);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      // 3D Mode: Fly camera to target world and update HUD inspector
+      flyToWorldStation(index);
+      render3DWorldHUD(index);
+      renderWorldDock();
+    }
+
+    function updateNavHighlight() {
+      document.querySelectorAll('.nav-link').forEach((btn) => {
+        const idx = Number(btn.getAttribute('data-nav-world'));
+        if (idx === activeWorldIndex) {
+          btn.classList.add('bg-sky-500/15', 'text-sky-300');
+        } else {
+          btn.classList.remove('bg-sky-500/15', 'text-sky-300');
+        }
+      });
+    }
+
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobile-nav-drawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    // =========================================================================
+    // 3D HUD INSPECTOR RENDERER (All 7 Interconnected Worlds)
+    // =========================================================================
+    function renderWorldDock() {
+      const dock = document.getElementById('world-dock-buttons');
+      dock.innerHTML = PORTFOLIO_DATA.worlds.map((w) => {
+        const isActive = w.id === activeWorldIndex;
+        return `
+          <button
+            onclick="navigateToWorld(${w.id})"
+            class="flex-1 min-w-[92px] px-2.5 py-2 rounded-xl text-left transition-all border ${
+              isActive
+                ? 'bg-sky-500/20 border-sky-400/60 text-white shadow-glow-cyan'
+                : 'bg-slate-900/70 hover:bg-slate-800/90 border-slate-800 text-slate-400 hover:text-slate-200'
+            }"
+          >
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono" style="color:${w.hex}">${w.code}</span>
+              ${isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>' : ''}
+            </div>
+            <div class="text-xs font-bold truncate mt-0.5">${w.short}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function render3DWorldHUD(index) {
+      const world = PORTFOLIO_DATA.worlds[index];
+      const indicator = document.getElementById('hud-world-indicator');
+      indicator.textContent = `WORLD ${world.code}/07 • ${world.name.toUpperCase()}`;
+
+      const card = document.getElementById('hud-card-body');
+      // Re-trigger subtle animation
+      card.classList.remove('hud-slide-in');
+      void card.offsetWidth;
+      card.classList.add('hud-slide-in');
+
+      let innerHTML = '';
+
+      if (index === 0) {
+        // WORLD 01: IDENTITY CORE (Includes Circular Framed Profile Portrait)
+        innerHTML = `
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-400/30">World 01 • Identity Core</span>
+              <span class="text-xs font-mono text-slate-400">Hyderabad, IN</span>
+            </div>
+            <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-slate-900/90 border border-sky-500/25">
+              <div class="relative w-16 h-16 rounded-full p-0.5 bg-gradient-to-br from-sky-400 to-emerald-400 shadow-glow-cyan shrink-0">
+                <img
+                  src="${currentProfilePhotoSrc}"
+                  alt="Shiva Prasad Reddy Kistipati"
+                  onerror="handleProfileImgError(this)"
+                  class="profile-photo-img w-full h-full rounded-full object-cover object-top bg-slate-950"
+                />
+              </div>
+              <div class="min-w-0">
+                <h2 class="text-base sm:text-lg font-extrabold text-white leading-tight">Shiva Prasad Reddy Kistipati</h2>
+                <p class="text-xs text-sky-300 font-medium mt-0.5">${PORTFOLIO_DATA.profile.headline}</p>
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              ${PORTFOLIO_DATA.profile.summary}
+            </p>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div class="text-base font-extrabold text-sky-400 font-mono">8.46 / 10</div>
+                <div class="text-[11px] text-slate-400">B.Tech CSE (Data Science)</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div class="text-base font-extrabold text-emerald-400 font-mono">SQL 50</div>
+                <div class="text-[11px] text-slate-400">LeetCode Verified Badge</div>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <button onclick="navigateToWorld(2)" class="flex-1 py-2.5 px-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition">
+                Inspect Projects →
+              </button>
+              <button onclick="openResumeModal()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition">
+                View Resume
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (index === 1) {
+        // WORLD 02: TECH MATRIX (SKILLS)
+        innerHTML = `
+          <div class="space-y-3.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">World 02 • Tech Matrix</span>
+              <span class="text-xs font-mono text-slate-400">5 Core Pillars</span>
+            </div>
+            <h2 class="text-lg font-extrabold text-white">Verified Technical Capabilities</h2>
+            <div class="space-y-2.5">
+              ${PORTFOLIO_DATA.skills.map(s => `
+                <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-sky-500/40 transition">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-sm font-bold text-white">${s.name}</span>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-sky-300">${s.badge}</span>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mb-2">
+                    <div class="h-full rounded-full" style="width:${s.proficiency}%; background:${s.accent}"></div>
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                    ${s.topics.map(t => `<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-obsidian text-slate-300 border border-slate-800">${t}</span>`).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (index === 2) {
+        // WORLD 03: PROJECT FORGE
+        innerHTML = `
+          <div class="space-y-3.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-400/30">World 03 • Project Forge</span>
+              <span class="text-xs font-mono text-slate-400">Production & BI</span>
+            </div>
+            <h2 class="text-lg font-extrabold text-white">Real-World Data & AI Projects</h2>
+            <div class="space-y-3">
+              ${PORTFOLIO_DATA.projects.map(p => `
+                <div class="p-3.5 rounded-xl bg-slate-900/95 border border-slate-800 space-y-2">
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="text-sm font-bold text-white leading-snug">${p.title}</h3>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed">${p.businessProblem}</p>
+                  <div class="flex flex-wrap gap-1">
+                    ${p.stack.map(st => `<span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-400/20">${st}</span>`).join('')}
+                  </div>
+                  <div class="flex items-center gap-2 pt-1">
+                    <button onclick="openProjectModal('${p.id}')" class="flex-1 py-1.5 px-2.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 font-semibold text-xs border border-sky-400/30 transition">
+                      Inspect Case Study
+                    </button>
+                    ${p.liveUrl ? `<a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition">Live App ↗</a>` : ''}
+                    <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition">GitHub</a>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (index === 3) {
+        // WORLD 04: EXPERIENCE NEXUS
+        innerHTML = `
+          <div class="space-y-3.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-lg bg-purple-500/15 text-purple-300 border border-purple-400/30">World 04 • Experience Nexus</span>
+              <span class="text-xs font-mono text-slate-400">Internships</span>
+            </div>
+            <h2 class="text-lg font-extrabold text-white">AI & Cloud Internship Experience</h2>
+            <div class="space-y-3">
+              ${PORTFOLIO_DATA.experience.map(exp => `
+                <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-mono font-bold text-sky-300">${exp.organization}</span>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">${exp.type}</span>
+                  </div>
+                  <h3 class="text-sm font-bold text-white">${exp.role}</h3>
+                  <ul class="space-y-1 text-xs text-slate-300 list-disc ml-4">
+                    ${exp.highlights.map(h => `<li>${h}</li>`).join('')}
+                  </ul>
+                  <div class="flex flex-wrap gap-1 pt-1">
+                    ${exp.tags.map(t => `<span class="text-[10px] font-mono px-2 py-0.5 rounded bg-obsidian text-slate-400 border border-slate-800">${t}</span>`).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (index === 4) {
+        // WORLD 05: ACADEMIC CITADEL
+        innerHTML = `
+          <div class="space-y-3.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-400/30">World 05 • Academic Citadel</span>
+              <span class="text-xs font-mono text-slate-400">CS & Data Science</span>
+            </div>
+            <h2 class="text-lg font-extrabold text-white">Academic Background</h2>
+            <div class="space-y-3">
+              ${PORTFOLIO_DATA.education.map(edu => `
+                <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+                  <div class="flex items-center justify-between text-xs font-mono">
+                    <span class="text-amber-300 font-bold">${edu.score}</span>
+                    <span class="text-slate-400">${edu.period}</span>
+                  </div>
+                  <h3 class="text-sm font-bold text-white">${edu.degree}</h3>
+                  <div class="text-xs text-sky-300">${edu.institution}</div>
+                  <p class="text-xs text-slate-400 pt-1">${edu.focus}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (index === 5) {
+        // WORLD 06: CREDENTIAL VAULT
+        innerHTML = `
+          <div class="space-y-3.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">World 06 • Credential Vault</span>
+              <span class="text-xs font-mono text-slate-400">Verified Badges</span>
+            </div>
+            <h2 class="text-lg font-extrabold text-white">Certifications & Coding Platforms</h2>
+            <div class="space-y-2">
+              ${PORTFOLIO_DATA.certifications.map(c => `
+                <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-white">${c.title}</span>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 shrink-0">${c.badge}</span>
+                  </div>
+                  <div class="text-[11px] font-mono text-sky-400 mt-0.5">${c.issuer}</div>
+                  <p class="text-[11px] text-slate-400 mt-1">${c.detail}</p>
+                </div>
+              `).join('')}
+            </div>
+            <a href="https://leetcode.com/u/K_s_reddy133" target="_blank" rel="noopener noreferrer" class="block w-full text-center py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-mono text-xs border border-amber-400/30 transition">
+              Verify LeetCode Profile (K_s_reddy133) ↗
+            </a>
+          </div>
+        `;
+      } else if (index === 6) {
+        // WORLD 07: COMMS TERMINAL
+        innerHTML = `
+          <div class="space-y-3.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-lg bg-rose-500/15 text-rose-300 border border-rose-400/30">World 07 • Comms Terminal</span>
+              <span class="text-xs font-mono text-emerald-400">Ready to Connect</span>
+            </div>
+            <h2 class="text-lg font-extrabold text-white">Recruiter & Collaboration Channel</h2>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Reach out directly for Data Science, Machine Learning, AI, or Data Analytics roles and internships.
+            </p>
+            <div class="space-y-2">
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-2">
+                <span class="text-xs text-slate-200 truncate">kkshivareddykistipati@gmail.com</span>
+                <button onclick="copyToClipboard('kkshivareddykistipati@gmail.com', 'Email')" class="px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 font-mono text-[11px] shrink-0">Copy</button>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-2">
+                <span class="text-xs text-slate-200">+91 9951338294</span>
+                <button onclick="copyToClipboard('+91 9951338294', 'Phone')" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-mono text-[11px] shrink-0">Copy</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              <button onclick="openResumeModal()" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 font-bold text-xs">
+                Download Resume
+              </button>
+              <a href="https://www.linkedin.com/in/kistipati-shivaprasadreddy" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs text-center border border-slate-700">
+                LinkedIn ↗
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      // Prev / Next World Footer inside HUD Card
+      const prevIdx = (index - 1 + PORTFOLIO_DATA.worlds.length) % PORTFOLIO_DATA.worlds.length;
+      const nextIdx = (index + 1) % PORTFOLIO_DATA.worlds.length;
+      innerHTML += `
+        <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
+          <button onclick="navigateToWorld(${prevIdx})" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+            ← ${PORTFOLIO_DATA.worlds[prevIdx].short}
+          </button>
+          <button onclick="navigateToWorld(${nextIdx})" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-sky-300 border border-slate-800 transition">
+            ${PORTFOLIO_DATA.worlds[nextIdx].short} →
+          </button>
+        </div>
+      `;
+
+      card.innerHTML = innerHTML;
+    }
+
+    // =========================================================================
+    // MODE 2 (QUICK VIEW) DYNAMIC RENDERING
+    // =========================================================================
+    function renderQuickViewSections() {
+      // 1. Projects Grid
+      const projectsGrid = document.getElementById('qv-projects-grid');
+      projectsGrid.innerHTML = PORTFOLIO_DATA.projects.map(p => `
+        <article class="glass-panel rounded-3xl p-6 sm:p-7 border border-slate-800 hover:border-sky-400/40 transition flex flex-col justify-between space-y-5">
+          <div class="space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap gap-1.5">
+                ${p.stack.map(st => `<span class="text-xs font-mono px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-300 border border-sky-400/20">${st}</span>`).join('')}
+              </div>
+              ${p.liveUrl ? `<span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">Live Deployed</span>` : `<span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/30">BI Analytics</span>`}
+            </div>
+            <div>
+              <h3 class="text-xl font-extrabold text-white">${p.title}</h3>
+              <p class="text-xs text-sky-300 font-medium mt-1">${p.tagline}</p>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-1">
+              <div class="text-[11px] font-mono uppercase text-slate-400">Business Problem</div>
+              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${p.businessProblem}</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              ${p.metrics.map(m => `<span class="text-xs px-2.5 py-1 rounded-lg bg-slate-900 text-emerald-300 border border-emerald-500/20">✓ ${m}</span>`).join('')}
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center gap-2.5">
+            <button onclick="openProjectModal('${p.id}')" class="px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition">
+              Inspect Implementation Details
+            </button>
+            ${p.liveUrl ? `<a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 font-semibold text-xs border border-emerald-400/30 transition">Live Demo ↗</a>` : ''}
+            <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 font-semibold text-xs border border-slate-700 transition">GitHub Repo</a>
+          </div>
+        </article>
+      `).join('');
+
+      // 2. Skills Filter & Cards
+      const categories = ['All', ...new Set(PORTFOLIO_DATA.skills.map(s => s.category))];
+      const filterContainer = document.getElementById('qv-skill-filters');
+      filterContainer.innerHTML = categories.map(cat => `
+        <button
+          onclick="filterQuickSkills('${cat}')"
+          class="px-3 py-1.5 rounded-xl text-xs font-mono transition border ${
+            activeSkillFilter === cat
+              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40'
+              : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
+          }"
+        >${cat}</button>
+      `).join('');
+
+      const filteredSkills = activeSkillFilter === 'All'
+        ? PORTFOLIO_DATA.skills
+        : PORTFOLIO_DATA.skills.filter(s => s.category === activeSkillFilter);
+
+      const skillsGrid = document.getElementById('qv-skills-grid');
+      skillsGrid.innerHTML = filteredSkills.map(s => `
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 hover:border-sky-400/40 transition flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-mono text-slate-400">${s.category}</span>
+              <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900 text-sky-300 border border-slate-700">${s.badge}</span>
+            </div>
+            <div class="flex items-end justify-between">
+              <h3 class="text-lg font-extrabold text-white">${s.name}</h3>
+              <span class="text-xs font-mono font-bold" style="color:${s.accent}">${s.proficiency}%</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-slate-900 overflow-hidden">
+              <div class="h-full rounded-full" style="width:${s.proficiency}%; background:${s.accent}"></div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${s.topics.map(t => `<span class="text-xs font-mono px-2 py-0.5 rounded-md bg-slate-900/90 text-slate-200 border border-slate-800">${t}</span>`).join('')}
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 pt-2 border-t border-slate-800/80 leading-relaxed">${s.evidence}</p>
+        </div>
+      `).join('');
+
+      // 3. Experience List
+      document.getElementById('qv-experience-list').innerHTML = PORTFOLIO_DATA.experience.map(exp => `
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-mono font-bold text-sky-400">${exp.organization}</span>
+            <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-900 text-slate-300 border border-slate-700">${exp.type}</span>
+          </div>
+          <h3 class="text-base font-bold text-white">${exp.role}</h3>
+          <ul class="list-disc ml-4 text-xs sm:text-sm text-slate-300 space-y-1">
+            ${exp.highlights.map(h => `<li>${h}</li>`).join('')}
+          </ul>
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            ${exp.tags.map(t => `<span class="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900 text-sky-300 border border-slate-800">${t}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      // 4. Education List
+      document.getElementById('qv-education-list').innerHTML = PORTFOLIO_DATA.education.map(edu => `
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between gap-2 text-xs font-mono">
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 font-bold">${edu.score}</span>
+            <span class="text-slate-400">${edu.period}</span>
+          </div>
+          <h3 class="text-base font-bold text-white">${edu.degree}</h3>
+          <div class="text-xs font-semibold text-sky-300">${edu.institution}</div>
+          <p class="text-xs text-slate-400 leading-relaxed">${edu.focus}</p>
+        </div>
+      `).join('');
+
+      // 5. Certifications Grid
+      document.getElementById('qv-certs-grid').innerHTML = PORTFOLIO_DATA.certifications.map(c => `
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 flex flex-col justify-between space-y-3">
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-mono font-bold text-sky-400">${c.issuer}</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-400/30">${c.badge}</span>
+            </div>
+            <h3 class="text-sm font-bold text-white">${c.title}</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">${c.detail}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterQuickSkills(cat) {
+      activeSkillFilter = cat;
+      renderQuickViewSections();
+    }
+
+    // =========================================================================
+    // MODALS, CLIPBOARD & RESUME EXPORT UTILITIES
+    // =========================================================================
+    function openProjectModal(projectId) {
+      const p = PORTFOLIO_DATA.projects.find(item => item.id === projectId);
+      if (!p) return;
+      const modal = document.getElementById('project-modal');
+      const content = document.getElementById('project-modal-content');
+      content.innerHTML = `
+        <div class="space-y-5">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-wider text-sky-400">Project Architecture & Case Study</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-1">${p.title}</h2>
+            <p class="text-xs sm:text-sm text-sky-300 mt-1">${p.tagline}</p>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            ${p.stack.map(st => `<span class="text-xs font-mono px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-400/30">${st}</span>`).join('')}
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1.5">
+            <h3 class="text-xs font-mono uppercase text-amber-300">1. Business Problem</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">${p.businessProblem}</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1.5">
+            <h3 class="text-xs font-mono uppercase text-emerald-300">2. Technical Implementation</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">${p.implementation}</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            ${p.metrics.map(m => `<span class="text-xs font-mono px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-400/25">✓ ${m}</span>`).join('')}
+          </div>
+          <div class="pt-3 border-t border-slate-800 flex flex-wrap gap-3">
+            ${p.liveUrl ? `<a href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 font-bold text-xs">Launch Live Application ↗</a>` : ''}
+            <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700">Open GitHub Repository ↗</a>
+          </div>
+        </div>
+      `;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeProjectModal() {
+      const modal = document.getElementById('project-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openResumeModal() {
+      const modal = document.getElementById('resume-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeResumeModal() {
+      const modal = document.getElementById('resume-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function downloadResumeTextFile() {
+      const text = `SHIVA PRASAD REDDY KISTIPATI
+Hyderabad, Telangana, India | +91 9951338294 | kkshivareddykistipati@gmail.com
+LinkedIn: https://www.linkedin.com/in/kistipati-shivaprasadreddy
+GitHub: https://github.com/Shivalateral
+LeetCode: https://leetcode.com/u/K_s_reddy133
+
+PROFESSIONAL SUMMARY
+Computer Science and Engineering (Data Science) graduate with a strong academic foundation in Python, SQL, data analysis, and machine learning. Experienced through academic projects and virtual internships in data preprocessing, exploratory analysis, predictive modeling, and interactive reporting. Seeking an entry-level role or internship in Data Science, Artificial Intelligence, Machine Learning, or Data Analytics to build practical, data-driven solutions.
+
+TECHNICAL SKILLS
+- Python: Data Structures, Unpacking, Comprehensions, Lambda Functions, Exception Handling, Pandas, Streamlit
+- SQL (MySQL): Joins, Recursive and Non-Recursive CTEs, Window Functions, Views, Stored Procedures
+- Advanced Excel: XLOOKUP, INDEX-MATCH, Pivot Tables, Power Query
+- Power BI: Data Modelling, DAX, CALCULATE(), Filter Context, Row-Level Security
+- Machine Learning: Regression, Classification, Feature Engineering, Random Forest, XGBoost, Model Evaluation
+
+PROJECTS
+1. DataPilot AI - Automated Data Analysis Platform | Python, Pandas, Excel, Streamlit (https://datapilot-ai-2.onrender.com)
+   - Developed an end-to-end workflow for uploading and processing Excel datasets, automating data cleaning and transformation tasks.
+   - Implemented automated KPI generation, pivot analysis, interactive visual dashboards, and downloadable analytical reports.
+2. Blinkit Sales Analysis Dashboard | Advanced Excel
+   - Analyzed sales performance, product categories, outlet types, and customer purchasing patterns across retail datasets.
+   - Applied Pivot Tables, XLOOKUP, data cleaning, and interactive charts to design an executive dashboard and derive actionable business insights.
+
+INTERNSHIP EXPERIENCE
+- Google Cloud - Generative AI Virtual Internship (Cohort 9)
+- TechSaksham - AI Internship
+
+EDUCATION
+- B.Tech - Computer Science & Engineering (Data Science) | 2023-2026 | Anurag University, Hyderabad | CGPA: 8.46 / 10
+- Diploma - Computer Science & Engineering | 2020-2023 | CGPA: 9.1 / 10
+
+CERTIFICATIONS & PROBLEM-SOLVING
+- NPTEL - Introduction to Machine Learning, Elite + Silver (75%)
+- NPTEL - Database Management Systems
+- Google Cloud - Data Analytics Virtual Internship
+- LeetCode: Completed SQL 50 study plan (50 SQL problems solved, SQL badge earned)
+- HackerRank: Practicing Python and SQL coding challenges`;
+
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Shiva_Prasad_Reddy_Kistipati_Resume.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Resume text file downloaded!');
+    }
+
+    function copyToClipboard(text, label) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      try {
+        document.execCommand('copy');
+        showToast(`${label} copied to clipboard!`);
+      } catch (err) {
+        showToast(`Could not copy ${label}`);
+      }
+      document.body.removeChild(temp);
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const inputs = form.querySelectorAll('input, textarea');
+      const name = inputs[0].value;
+      const email = inputs[1].value;
+      const role = inputs[2].value;
+      const msg = inputs[3].value;
+      const subject = encodeURIComponent(`Portfolio Inquiry: ${role} — from ${name}`);
+      const body = encodeURIComponent(`Hi Shiva Prasad Reddy,\n\nName: ${name}\nReply Email: ${email}\nRole/Opportunity: ${role}\n\nMessage:\n${msg}`);
+      showToast('Opening your email client with pre-filled inquiry...');
+      window.location.href = `mailto:kkshivareddykistipati@gmail.com?subject=${subject}&body=${body}`;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast-banner');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    // =========================================================================
+    // THREE.JS — AAA-INSPIRED 3D ARCHITECTURAL HUB, AVATAR & 7 WORLD STATIONS
+    // =========================================================================
+    let scene, camera, renderer, raycaster, mouse;
+    let avatarGroup, avatarHead, avatarVisor, avatarRings = [];
+    let worldStationMeshes = [];
+    let interactiveHitboxes = [];
+    let particleSystem;
+    let clock = new THREE.Clock();
+
+    // Camera Orbit & Smooth Flight State
+    let cameraTargetPos = new THREE.Vector3(0, 5.5, 11.5);
+    let controlsTarget = new THREE.Vector3(0, 1.2, 0);
+    let desiredControlsTarget = new THREE.Vector3(0, 1.2, 0);
+    let isFlying = false;
+
+    // Custom Orbit Drag & Touch State
+    let isPointerDown = false;
+    let pointerStart = { x: 0, y: 0 };
+    let spherical = { radius: 13.5, theta: 0.18, phi: 1.12 };
+
+    function initThreeJS() {
+      const canvas = document.getElementById('world-canvas');
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x070b14);
+      scene.fog = new THREE.FogExp2(0x070b14, 0.024);
+
+      camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 160);
+      updateCameraFromSpherical();
+
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.15;
+
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+
+      // Lighting Setup (Architectural Studio + Telemetry Accents)
+      const ambientLight = new THREE.AmbientLight(0x94a3b8, 0.65);
+      scene.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight(0x38bdf8, 1.5);
+      keyLight.position.set(12, 22, 14);
+      scene.add(keyLight);
+
+      const rimLight = new THREE.DirectionalLight(0x10b981, 1.1);
+      rimLight.position.set(-14, 15, -12);
+      scene.add(rimLight);
+
+      const centerCoreLight = new THREE.PointLight(0x38bdf8, 2.2, 18);
+      centerCoreLight.position.set(0, 2.5, 0);
+      scene.add(centerCoreLight);
+
+      // Architectural Floor Grid & Concentric Telemetry Rings
+      const gridHelper = new THREE.GridHelper(64, 64, 0x1e3a5f, 0x0f172a);
+      gridHelper.position.y = -0.5;
+      scene.add(gridHelper);
+
+      const floorDisc = new THREE.Mesh(
+        new THREE.CircleGeometry(18, 64),
+        new THREE.MeshStandardMaterial({
+          color: 0x0b1221,
+          metalness: 0.7,
+          roughness: 0.35
+        })
+      );
+      floorDisc.rotation.x = -Math.PI / 2;
+      floorDisc.position.y = -0.49;
+      scene.add(floorDisc);
+
+      // Build Central 3D Digital Avatar (World 01 — Identity Core)
+      buildDigitalAvatar();
+
+      // Build the 7 Interconnected World Stations & Circuit Beams
+      buildSevenWorlds();
+
+      // Ambient Data Telemetry Particles
+      buildTelemetryParticles();
+
+      // Bind Pointer & Keyboard Events
+      bindCanvasEvents(canvas);
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    function buildDigitalAvatar() {
+      avatarGroup = new THREE.Group();
+      avatarGroup.position.set(0, 0, 0);
+
+      // Pedestal Base
+      const pedestal = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.7, 2.1, 0.35, 6),
+        new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.85, roughness: 0.2 })
+      );
+      pedestal.position.y = -0.32;
+      avatarGroup.add(pedestal);
+
+      const pedestalRing = new THREE.Mesh(
+        new THREE.TorusGeometry(1.85, 0.04, 16, 48),
+        new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+      );
+      pedestalRing.rotation.x = Math.PI / 2;
+      pedestalRing.position.y = -0.14;
+      avatarGroup.add(pedestalRing);
+
+      // Stylized Sleek Cyber-Architect Torso
+      const torsoMat = new THREE.MeshStandardMaterial({
+        color: 0x131d33,
+        metalness: 0.75,
+        roughness: 0.25
+      });
+      const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.42, 1.35, 8), torsoMat);
+      torso.position.y = 1.05;
+      avatarGroup.add(torso);
+
+      // Glowing Chest Data Core
+      const chestCore = new THREE.Mesh(
+        new THREE.OctahedronGeometry(0.22, 0),
+        new THREE.MeshBasicMaterial({ color: 0x10b981 })
+      );
+      chestCore.position.set(0, 1.2, 0.45);
+      avatarGroup.add(chestCore);
+
+      // Stylized Head & Holographic Visor
+      avatarHead = new THREE.Group();
+      avatarHead.position.y = 2.15;
+
+      const headMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.42, 24, 24),
+        new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.6, roughness: 0.25 })
+      );
+      avatarHead.add(headMesh);
+
+      avatarVisor = new THREE.Mesh(
+        new THREE.BoxGeometry(0.64, 0.18, 0.25),
+        new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+      );
+      avatarVisor.position.set(0, 0.03, 0.31);
+      avatarHead.add(avatarVisor);
+
+      avatarGroup.add(avatarHead);
+
+      // Floating Orbital Halo Rings around Avatar
+      const halo1 = new THREE.Mesh(
+        new THREE.TorusGeometry(1.15, 0.02, 12, 64),
+        new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 })
+      );
+      halo1.position.y = 1.65;
+      halo1.rotation.x = Math.PI / 2.4;
+      avatarGroup.add(halo1);
+      avatarRings.push(halo1);
+
+      const halo2 = new THREE.Mesh(
+        new THREE.TorusGeometry(1.38, 0.015, 12, 64),
+        new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.45 })
+      );
+      halo2.position.y = 1.45;
+      halo2.rotation.x = -Math.PI / 2.8;
+      avatarGroup.add(halo2);
+      avatarRings.push(halo2);
+
+      // Holographic 3D ID Display Screen / Badge next to the Digital Avatar
+      const holoScreenGroup = new THREE.Group();
+      holoScreenGroup.position.set(-2.35, 1.55, 0.35);
+      holoScreenGroup.rotation.y = 0.38;
+
+      const frameOuter = new THREE.Mesh(
+        new THREE.BoxGeometry(1.56, 1.96, 0.06),
+        new THREE.MeshStandardMaterial({
+          color: 0x0f172a,
+          emissive: 0x38bdf8,
+          emissiveIntensity: 0.22,
+          metalness: 0.85,
+          roughness: 0.2
+        })
+      );
+      holoScreenGroup.add(frameOuter);
+
+      const borderTrim = new THREE.LineSegments(
+        new THREE.EdgesGeometry(new THREE.BoxGeometry(1.62, 2.02, 0.08)),
+        new THREE.LineBasicMaterial({ color: 0x38bdf8 })
+      );
+      holoScreenGroup.add(borderTrim);
+
+      const portraitMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        side: THREE.DoubleSide
+      });
+      holoPortraitMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.38, 1.76), portraitMat);
+      holoPortraitMesh.position.z = 0.04;
+      holoScreenGroup.add(holoPortraitMesh);
+
+      // Load 'my profile image.jpeg' onto the 3D holographic display with graceful fallback
+      updateHoloPortraitTexture(currentProfilePhotoSrc);
+
+      // Make the 3D Holographic Portrait Screen clickable to focus World 01
+      holoPortraitMesh.userData = { worldIndex: 0, label: "01. Identity Core — Shiva Prasad Reddy" };
+      interactiveHitboxes.push(holoPortraitMesh);
+
+      avatarGroup.add(holoScreenGroup);
+
+      // Clickable Hitbox for World 01 (Identity Core)
+      const coreHitbox = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.8, 1.8, 3.2, 12),
+        new THREE.MeshBasicMaterial({ visible: false })
+      );
+      coreHitbox.position.y = 1.3;
+      coreHitbox.userData = { worldIndex: 0, label: "01. Identity Core (About Me)" };
+      avatarGroup.add(coreHitbox);
+      interactiveHitboxes.push(coreHitbox);
+
+      scene.add(avatarGroup);
+    }
+
+    /**
+     * Loads the profile image into a Three.js Texture for the 3D Holographic ID Screen,
+     * falling back cleanly to a canvas-rendered executive badge if the file isn't found.
+     */
+    function updateHoloPortraitTexture(imageUrl) {
+      if (!holoPortraitMesh) return;
+      const loader = new THREE.TextureLoader();
+      loader.load(
+        imageUrl,
+        (texture) => {
+          texture.minFilter = THREE.LinearFilter;
+          holoPortraitMesh.material.map = texture;
+          holoPortraitMesh.material.needsUpdate = true;
+        },
+        undefined,
+        () => {
+          // Graceful Canvas-Rendered Portrait Badge Fallback for 3D Screen
+          const c = document.createElement('canvas');
+          c.width = 512;
+          c.height = 640;
+          const ctx = c.getContext('2d');
+          const grad = ctx.createLinearGradient(0, 0, 512, 640);
+          grad.addColorStop(0, '#0D1424');
+          grad.addColorStop(1, '#1E293B');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, 512, 640);
+
+          ctx.strokeStyle = '#38BDF8';
+          ctx.lineWidth = 10;
+          ctx.strokeRect(18, 18, 476, 604);
+
+          ctx.fillStyle = '#334155';
+          ctx.beginPath();
+          ctx.arc(256, 230, 88, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#1E3A5F';
+          ctx.beginPath();
+          ctx.arc(256, 470, 145, Math.PI, 0);
+          ctx.fill();
+
+          ctx.fillStyle = '#38BDF8';
+          ctx.font = 'bold 28px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('SHIVA PRASAD REDDY', 256, 535);
+
+          ctx.fillStyle = '#10B981';
+          ctx.font = '600 20px monospace';
+          ctx.fillText('DATA SCIENCE & AI', 256, 572);
+
+          const canvasTex = new THREE.CanvasTexture(c);
+          holoPortraitMesh.material.map = canvasTex;
+          holoPortraitMesh.material.needsUpdate = true;
+        }
+      );
+    }
+
+    function buildSevenWorlds() {
+      PORTFOLIO_DATA.worlds.forEach((world) => {
+        if (world.id === 0) return; // Central avatar is World 01
+
+        const stationGroup = new THREE.Group();
+        stationGroup.position.set(world.pos[0], world.pos[1], world.pos[2]);
+
+        // Hexagonal Architectural Platform
+        const base = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.45, 1.75, 0.35, 6),
+          new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.85, roughness: 0.25 })
+        );
+        base.position.y = -0.8;
+        stationGroup.add(base);
+
+        // Glowing Perimeter Hex Ring
+        const ring = new THREE.Mesh(
+          new THREE.RingGeometry(1.35, 1.52, 6),
+          new THREE.MeshBasicMaterial({ color: world.color, side: THREE.DoubleSide })
+        );
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.y = -0.61;
+        stationGroup.add(ring);
+
+        // Distinct Geometric Core Artifact per World
+        let artifactGeo;
+        if (world.id === 1) artifactGeo = new THREE.IcosahedronGeometry(0.75, 0); // Tech Matrix
+        else if (world.id === 2) artifactGeo = new THREE.OctahedronGeometry(0.82, 0); // Project Forge
+        else if (world.id === 3) artifactGeo = new THREE.TorusKnotGeometry(0.52, 0.16, 64, 12); // Experience Nexus
+        else if (world.id === 4) artifactGeo = new THREE.ConeGeometry(0.75, 1.35, 6); // Academic Citadel
+        else if (world.id === 5) artifactGeo = new THREE.DodecahedronGeometry(0.75, 0); // Credential Vault
+        else artifactGeo = new THREE.TorusGeometry(0.65, 0.2, 16, 32); // Comms Terminal
+
+        const artifact = new THREE.Mesh(
+          artifactGeo,
+          new THREE.MeshStandardMaterial({
+            color: world.color,
+            emissive: world.color,
+            emissiveIntensity: 0.35,
+            metalness: 0.6,
+            roughness: 0.2,
+            wireframe: false
+          })
+        );
+        artifact.position.y = 0.55;
+        stationGroup.add(artifact);
+
+        // Outer Wireframe Cage
+        const cage = new THREE.Mesh(
+          new THREE.OctahedronGeometry(1.15, 0),
+          new THREE.MeshBasicMaterial({ color: world.color, wireframe: true, transparent: true, opacity: 0.28 })
+        );
+        cage.position.y = 0.55;
+        stationGroup.add(cage);
+
+        // Luminous Circuit Beam connecting Central Hub to this World Station
+        const points = [
+          new THREE.Vector3(0, -0.3, 0),
+          new THREE.Vector3(world.pos[0] * 0.5, -0.3, world.pos[2] * 0.5),
+          new THREE.Vector3(world.pos[0], world.pos[1] - 0.75, world.pos[2])
+        ];
+        const curve = new THREE.CatmullRomCurve3(points);
+        const tubeGeo = new THREE.TubeGeometry(curve, 24, 0.035, 8, false);
+        const tubeMat = new THREE.MeshBasicMaterial({ color: world.color, transparent: true, opacity: 0.45 });
+        const beam = new THREE.Mesh(tubeGeo, tubeMat);
+        scene.add(beam);
+
+        // Invisible Hitbox for Easy Clicking / Tapping
+        const hitbox = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.75, 1.75, 2.8, 8),
+          new THREE.MeshBasicMaterial({ visible: false })
+        );
+        hitbox.position.y = 0.3;
+        hitbox.userData = { worldIndex: world.id, label: `${world.code}. ${world.name} (${world.short})` };
+        stationGroup.add(hitbox);
+        interactiveHitboxes.push(hitbox);
+
+        scene.add(stationGroup);
+        worldStationMeshes.push({ group: stationGroup, artifact, cage, baseY: world.pos[1], phase: world.id * 0.9 });
+      });
+    }
+
+    function buildTelemetryParticles() {
+      const count = 420;
+      const positions = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 44;
+        positions[i * 3 + 1] = Math.random() * 14 - 0.5;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 44;
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const mat = new THREE.PointsMaterial({
+        color: 0x38bdf8,
+        size: 0.09,
+        transparent: true,
+        opacity: 0.55
+      });
+      particleSystem = new THREE.Points(geo, mat);
+      scene.add(particleSystem);
+    }
+
+    function updateCameraFromSpherical() {
+      const x = controlsTarget.x + spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+      const y = controlsTarget.y + spherical.radius * Math.cos(spherical.phi);
+      const z = controlsTarget.z + spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+      camera.position.set(x, Math.max(0.8, y), z);
+      camera.lookAt(controlsTarget);
+    }
+
+    function flyToWorldStation(index) {
+      const world = PORTFOLIO_DATA.worlds[index];
+      if (!world) return;
+      isFlying = true;
+      desiredControlsTarget.set(world.pos[0], world.pos[1] + 0.6, world.pos[2]);
+
+      if (index === 0) {
+        spherical.radius = 9.5;
+        spherical.theta = 0.22;
+        spherical.phi = 1.18;
+      } else {
+        const angle = Math.atan2(world.pos[0], world.pos[2]);
+        spherical.radius = 7.2;
+        spherical.theta = angle + 0.35;
+        spherical.phi = 1.16;
+      }
+    }
+
+    function resetCameraOverview() {
+      isFlying = true;
+      desiredControlsTarget.set(0, 1.0, 0);
+      spherical.radius = 19.5;
+      spherical.theta = 0.25;
+      spherical.phi = 1.02;
+      showToast('Camera reset to 7-World Nexus Overview');
+    }
+
+    function bindCanvasEvents(canvas) {
+      const tooltip = document.getElementById('station-tooltip');
+
+      canvas.addEventListener('pointerdown', (e) => {
+        isPointerDown = true;
+        isFlying = false;
+        pointerStart = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('pointerup', (e) => {
+        if (!isPointerDown) return;
+        const dist = Math.hypot(e.clientX - pointerStart.x, e.clientY - pointerStart.y);
+        isPointerDown = false;
+
+        // Treat short tap/click as station selection
+        if (dist < 6 && currentMode === '3d') {
+          checkStationIntersection(e.clientX, e.clientY, true);
+        }
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (currentMode !== '3d') return;
+
+        if (isPointerDown) {
+          const dx = e.clientX - pointerStart.x;
+          const dy = e.clientY - pointerStart.y;
+          pointerStart = { x: e.clientX, y: e.clientY };
+
+          spherical.theta -= dx * 0.0065;
+          spherical.phi = Math.max(0.45, Math.min(1.42, spherical.phi - dy * 0.0055));
+          updateCameraFromSpherical();
+          tooltip.classList.add('hidden');
+        } else {
+          const hit = checkStationIntersection(e.clientX, e.clientY, false);
+          if (hit) {
+            canvas.style.cursor = 'pointer';
+            tooltip.textContent = `Click to enter: ${hit.userData.label}`;
+            tooltip.style.left = `${e.clientX + 14}px`;
+            tooltip.style.top = `${e.clientY + 14}px`;
+            tooltip.classList.remove('hidden');
+          } else {
+            canvas.style.cursor = 'grab';
+            tooltip.classList.add('hidden');
+          }
+        }
+      });
+
+      canvas.addEventListener('wheel', (e) => {
+        if (currentMode !== '3d') return;
+        e.preventDefault();
+        isFlying = false;
+        spherical.radius = Math.max(5.0, Math.min(26.0, spherical.radius + e.deltaY * 0.01));
+        updateCameraFromSpherical();
+      }, { passive: false });
+
+      // Keyboard Shortcuts: 1-7 for Worlds, R for Overview, Esc to close modals
+      window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key >= '1' && e.key <= '7') {
+          navigateToWorld(Number(e.key) - 1);
+        } else if (e.key.toLowerCase() === 'r' && currentMode === '3d') {
+          resetCameraOverview();
+        } else if (e.key === 'Escape') {
+          closeProjectModal();
+          closeResumeModal();
+        }
+      });
+    }
+
+    function checkStationIntersection(clientX, clientY, shouldNavigate) {
+      mouse.x = (clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(interactiveHitboxes, false);
+      if (intersects.length > 0) {
+        const hit = intersects[0].object;
+        if (shouldNavigate && typeof hit.userData.worldIndex === 'number') {
+          navigateToWorld(hit.userData.worldIndex);
+        }
+        return hit;
+      }
+      return null;
+    }
+
+    function onWindowResize() {
+      if (!camera || !renderer) return;
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
+
+      if (currentMode === '3d') {
+        // Animate Digital Avatar breathing & orbital rings
+        if (avatarGroup) {
+          avatarGroup.position.y = Math.sin(elapsed * 2.0) * 0.08;
+          avatarHead.rotation.y = Math.sin(elapsed * 0.9) * 0.18;
+          avatarRings[0].rotation.z = elapsed * 0.6;
+          avatarRings[1].rotation.z = -elapsed * 0.45;
+        }
+
+        // Animate 6 Outer World Stations
+        worldStationMeshes.forEach((st) => {
+          st.artifact.rotation.y = elapsed * 0.75 + st.phase;
+          st.artifact.rotation.x = Math.sin(elapsed * 0.5 + st.phase) * 0.25;
+          st.cage.rotation.y = -elapsed * 0.35;
+          st.group.position.y = st.baseY + Math.sin(elapsed * 1.6 + st.phase) * 0.14;
+        });
+
+        // Subtle particle drift
+        if (particleSystem) {
+          particleSystem.rotation.y = elapsed * 0.025;
+        }
+
+        // Smooth camera flight interpolation
+        if (isFlying) {
+          controlsTarget.lerp(desiredControlsTarget, 0.075);
+          updateCameraFromSpherical();
+          if (controlsTarget.distanceTo(desiredControlsTarget) < 0.03) {
+            isFlying = false;
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+    }
+
+    // =========================================================================
+    // BOOTSTRAP ON WINDOW LOAD
+    // =========================================================================
+    window.onload = function () {
+      renderWorldDock();
+      render3DWorldHUD(0);
+      renderQuickViewSections();
+      updateNavHighlight();
+
+      initThreeJS();
+      flyToWorldStation(0);
+      animate();
+    };
+  </script>
+</body>
+</html>
